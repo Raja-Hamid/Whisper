@@ -98,7 +98,7 @@ class _ChatPageState extends State<ChatPage> {
                 );
               },
               child: const CircleAvatar(
-                backgroundImage: NetworkImage('https://plus.unsplash.com/premium_photo-1673866484792-c5a36a6c025e?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsfGVufDB8fDB8fHww%3D%3D'),
+                backgroundImage: AssetImage('assets/images/profile3.png'),
               ),
             ),
           ),
@@ -182,8 +182,8 @@ class _ChatPageState extends State<ChatPage> {
                       }
                       if (!userAdded && index == users.length - 1) {
                         return Container(
-                          padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
-                          child: Column(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
+                          child: const Column(
                             children: [
                               CircleAvatar(
                                 radius: 30,
@@ -194,7 +194,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         );
                       }
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     },
                   );
                 }
@@ -245,7 +245,7 @@ class _ChatPageState extends State<ChatPage> {
                         } else if (snapshot.hasError) {
                           return Center(child: Text('Error: ${snapshot.error}'));
                         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return Center(child: Text('No users found'));
+                          return const Center(child: Text('No users found'));
                         } else {
                           List<Map<String, dynamic>> users = snapshot.data!;
                           bool userAdded = false;
@@ -275,7 +275,7 @@ class _ChatPageState extends State<ChatPage> {
                                   currentuser: widget.currentuser,
                                 );
                               }
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             },
                           );
                         }

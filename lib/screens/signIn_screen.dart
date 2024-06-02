@@ -9,33 +9,32 @@ import 'package:whisper/widgets/text_field.dart';
 import 'homeChat_screen.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({Key? key});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  String? sender;
-  String? email;
-  String? password;
   bool rememberPassword = true;
   final _formSignInKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   Future<void> login() async {
-    if (password != null && emailController.text != "") {
+    if (_formSignInKey.currentState!.validate()) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+
       try {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return const Center(child: CircularProgressIndicator());
-            });
         UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email!, password: password!);
-
-
+            .signInWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text);
 
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
@@ -43,7 +42,6 @@ class _SignInScreenState extends State<SignInScreen> {
             .get();
 
         Navigator.of(context).pop();
-
 
         if (userDoc.exists) {
           String email = userDoc.get('email');
@@ -58,46 +56,29 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
           );
-
-
-
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.redAccent,
-              content: Text(
-                'User data not found.',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-          );
         }
       } on FirebaseAuthException catch (e) {
+        Navigator.of(context).pop();
+        String errorMessage;
         if (e.code == 'user-not-found') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.orangeAccent,
-              content: Text(
-                'No User Found for that Email',
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
-              ),
-            ),
-          );
+          errorMessage = 'No User Found for that Email';
         } else if (e.code == 'wrong-password') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.orangeAccent,
-              content: Text(
-                'Wrong Password Provided!',
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
+          errorMessage = 'Wrong Password Provided!';
+        } else {
+          errorMessage = 'An error occurred: ${e.message}';
+          print(errorMessage);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text(
+              errorMessage,
+              style: const TextStyle(
+                fontSize: 18.0,
               ),
             ),
-          );
-        }
+          ),
+        );
       }
     }
   }
@@ -145,7 +126,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         keyboardType: TextInputType.emailAddress,
                         obscureText: false,
                         validator: (value) {
-                          email = value;
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
                           }
@@ -218,15 +198,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formSignInKey.currentState!.validate()) {
-                              setState(() {
-                                email = emailController.text;
-                                password = passwordController.text;
-                              });
-                            }
-                            await login();
-                          },
+                          onPressed: login,
                           child: const Text('Sign In'),
                         ),
                       ),
