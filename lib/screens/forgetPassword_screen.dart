@@ -70,6 +70,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ),
               child: SingleChildScrollView(
                 child: Form(
+                  key: _formRecoveryKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -87,6 +88,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       CustomTextField(
                         label: 'Recovery Email',
                         hintText: 'Enter Recovery Email',
+                        keyboardType: TextInputType.emailAddress,
                         obscureText: false,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -106,9 +108,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                             if (_formRecoveryKey.currentState!.validate()) {
                               setState(() {
                                 email = emailController.text;
+                                print(email);
                               });
+                              reset();
                             }
-                            reset();
                           },
                           child: const Text('Send Code'),
                         ),
