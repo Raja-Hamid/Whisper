@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:whisper/screens/chatPage_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-class AddProfileScreen extends StatefulWidget {
+class AddUserScreen extends StatefulWidget {
   final String currentUser;
   final String currentEmail;
-  const AddProfileScreen({required this.currentUser,required this.currentEmail});
+  const AddUserScreen(
+      {super.key, required this.currentUser, required this.currentEmail});
 
   @override
-  State<AddProfileScreen> createState() => _AddProfileScreenState();
+  State<AddUserScreen> createState() => _AddUserScreenState();
 }
 
-class _AddProfileScreenState extends State<AddProfileScreen> {
-
-  final textAddNameController =TextEditingController();
-  final textAddEmailController=TextEditingController();
+class _AddUserScreenState extends State<AddUserScreen> {
+  final textAddNameController = TextEditingController();
+  final textAddEmailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar
-        (
-        title: const Text('Add Profile',style: TextStyle(color: Colors.black),),
+      appBar: AppBar(
+        title: const Text(
+          'Add Profile',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -31,10 +32,13 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               const SizedBox(height: 20),
               const CircleAvatar(
                 radius: 130,
-                backgroundImage: AssetImage('assets/images/icon.png'), // Replace with your desired image source
+                backgroundImage: AssetImage('assets/images/icon.png'),
               ),
               const SizedBox(height: 20),
-              const Text('Whisper a friend',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
+              const Text(
+                'Whisper a friend',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -63,24 +67,21 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 child: TextField(
                   controller: textAddEmailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration
-                    (
+                  decoration: InputDecoration(
                     labelText: 'Email',
-                    border: OutlineInputBorder
-                      (
-                      borderSide: const BorderSide(color: Colors.black12,),
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.black12,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    enabledBorder: OutlineInputBorder
-                      (
-                      borderSide: const BorderSide
-                        (
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
                         color: Colors.black12,
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-
                 ),
               ),
               const SizedBox(height: 20),
@@ -98,21 +99,30 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   SizedBox(width: 20,),*/
                   ElevatedButton(
                     onPressed: () {
-                      Map<String,String> adduser={
-                        'CurrentUser':widget.currentUser,
-                        'AddedUser':textAddNameController.text,
-                        'AddedEmail':widget.currentEmail
+                      Map<String, String> adduser = {
+                        'CurrentUser': widget.currentUser,
+                        'AddedUser': textAddNameController.text,
+                        'AddedEmail': widget.currentEmail
                       };
-                      FirebaseFirestore.instance.collection('added_users').add(adduser);
+                      FirebaseFirestore.instance
+                          .collection('added_users')
+                          .add(adduser);
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentUser: widget.currentUser, email: widget.currentEmail)
-                      )
-                      );
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                  currentUser: widget.currentUser,
+                                  email: widget.currentEmail)));
                     },
-                    child: const Text('Add',style: TextStyle(color: Colors.white),),
+                    child: const Text(
+                      'Add',
+                      style: TextStyle(color: Colors.white),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(horizontal: 65, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 65, vertical: 10),
                     ),
                   ),
                 ],
@@ -124,7 +134,3 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
     );
   }
 }
-
-
-
-

@@ -117,7 +117,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddProfileScreen(currentUser: widget.currentUser, currentEmail: widget.email)),
+                MaterialPageRoute(builder: (context) => AddUserScreen(currentUser: widget.currentUser, currentEmail: widget.email)),
               );
             },
             icon: const Icon(CupertinoIcons.person_add),
