@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:whisper/screens/chatPage_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:whisper/screens/chatPage_screen.dart';
 import 'package:whisper/widgets/text_field.dart';
 
 class AddUserScreen extends StatefulWidget {
   final String currentUser;
   final String currentEmail;
-  const AddUserScreen(
-      {super.key, required this.currentUser, required this.currentEmail});
+  const AddUserScreen({
+    Key? key,
+    required this.currentUser,
+    required this.currentEmail,
+  }) : super(key: key);
 
   @override
   State<AddUserScreen> createState() => _AddUserScreenState();
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
-  String? email;
   final emailController = TextEditingController();
   final _formAddKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,24 +71,32 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () {
-                    Map<String, String> adduser = {
-                      'CurrentUser': widget.currentUser,
-                      'AddedEmail': widget.currentEmail
-                    };
-                    FirebaseFirestore.instance
-                        .collection('added_users')
-                        .add(adduser);
+                  onPressed: () async {
+                    if (_formAddKey.currentState!.validate()) {
+                      String email = emailController.text;
 
-                    Navigator.push(
+                      Map<String, String> adduser = {
+                        'CurrentUser': widget.currentUser,
+                        'AddedEmail': email,
+                      };
+
+                      await FirebaseFirestore.instance
+                          .collection('added_users')
+                          .add(adduser);
+
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                                currentUser: widget.currentUser,
-                                email: widget.currentEmail)));
+                          builder: (context) => ChatPage(
+                            currentUser: widget.currentUser,
+                            email: email,
+                          ),
+                        ),
+                      );
+                    }
                   },
-                  child: Text(
-                    'Send Code',
+                  child: const Text(
+                    'Add',
                     style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
