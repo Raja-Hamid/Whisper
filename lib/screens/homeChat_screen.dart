@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:whisper/screens/chatPage_screen.dart';
 
 class home extends StatefulWidget {
-  final String currentuser;
+  final String currentUser;
   final String email;
 
-  home({required this.currentuser, required this.email});
+  home({required this.currentUser, required this.email});
 
   @override
   State<home> createState() => _homeState();
@@ -16,7 +16,7 @@ class _homeState extends State<home> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ChatPage(
-        currentuser: widget.currentuser,
+        currentUser: widget.currentUser,
         email: widget.email,
       ),
     );

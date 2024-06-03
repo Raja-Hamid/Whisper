@@ -62,9 +62,9 @@ Future<List<Map<String, dynamic>>> fetchUsers() async {
 
 class ChatPage extends StatefulWidget {
   final String email;
-  final String currentuser;
+  final String currentUser;
 
-  ChatPage({required this.currentuser, required this.email});
+  ChatPage({required this.currentUser, required this.email});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -94,7 +94,7 @@ class _ChatPageState extends State<ChatPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => profile(currentuser: widget.currentuser, email: widget.email)),
+                  MaterialPageRoute(builder: (context) => profile(currentuser: widget.currentUser, email: widget.email)),
                 );
               },
               child: const CircleAvatar(
@@ -117,7 +117,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddProfileScreen(currentUser: widget.currentuser, currentEmail: widget.email)),
+                MaterialPageRoute(builder: (context) => AddProfileScreen(currentUser: widget.currentUser, currentEmail: widget.email)),
               );
             },
             icon: const Icon(CupertinoIcons.person_add),
@@ -141,7 +141,7 @@ class _ChatPageState extends State<ChatPage> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No users found'));
+                  return const Center(child: Text('No users found'));
                 } else {
                   List<Map<String, dynamic>> users = snapshot.data!;
                   bool userAdded = false;
@@ -151,10 +151,10 @@ class _ChatPageState extends State<ChatPage> {
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
                       String currentUser = users[index]['CurrentUser'] as String? ?? '';
-                      if (currentUser == widget.currentuser) {
+                      if (currentUser == widget.currentUser) {
                         userAdded = true;
                         return Padding(
-                          padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
+                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -162,7 +162,7 @@ class _ChatPageState extends State<ChatPage> {
                                 MaterialPageRoute(
                                   builder: (context) => MessageScreen(
                                     receiver: users[index]['AddedUser'] as String? ?? 'No Name',
-                                    currentuser: widget.currentuser,
+                                    currentuser: widget.currentUser,
                                     imageurl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
                                   ),
                                 ),
@@ -174,7 +174,7 @@ class _ChatPageState extends State<ChatPage> {
                                   radius: 30,
                                   backgroundImage: AssetImage(ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL),
                                 ),
-                                Text(users[index]['AddedUser'] as String? ?? 'No Name', style: TextStyle(fontSize: 15, color: Colors.white)),
+                                Text(users[index]['AddedUser'] as String? ?? 'No Name', style: const TextStyle(fontSize: 15, color: Colors.white)),
                               ],
                             ),
                           ),
@@ -258,13 +258,13 @@ class _ChatPageState extends State<ChatPage> {
                               String addedUser = users[index]['AddedUser'] as String? ?? 'No Name';
                               String addedEmail = users[index]['AddedEmail'] as String? ?? 'No Email';
 
-                              if (currentUser == widget.currentuser) {
+                              if (currentUser == widget.currentUser) {
                                 userAdded = true;
                                 return ConversationList(
                                   name: addedUser,
                                   imageUrl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
                                   email: addedEmail,
-                                  currentuser: widget.currentuser,
+                                  currentuser: widget.currentUser,
                                 );
                               }
                               if (!userAdded && index == users.length - 1) {
@@ -272,7 +272,7 @@ class _ChatPageState extends State<ChatPage> {
                                   name: 'No user Added',
                                   imageUrl: '',
                                   email: '',
-                                  currentuser: widget.currentuser,
+                                  currentuser: widget.currentUser,
                                 );
                               }
                               return const SizedBox.shrink();

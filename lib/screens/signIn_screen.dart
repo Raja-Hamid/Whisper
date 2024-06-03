@@ -51,7 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => home(
-                currentuser: fullName,
+                currentUser: fullName,
                 email: email,
               ),
             ),
@@ -66,7 +66,6 @@ class _SignInScreenState extends State<SignInScreen> {
           errorMessage = 'Wrong Password Provided!';
         } else {
           errorMessage = 'An error occurred: ${e.message}';
-          print(errorMessage);
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
