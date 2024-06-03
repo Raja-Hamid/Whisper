@@ -140,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No users found'));
+                  return const Center(child: Text('No users found'));
                 } else {
                   List<Map<String, dynamic>> users = snapshot.data!;
                   bool userAdded = false;
@@ -154,7 +154,7 @@ class _ChatPageState extends State<ChatPage> {
                         if (currentUser == widget.currentUser) {
                           userAdded = true;
                           return Padding(
-                            padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
+                            padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -181,7 +181,7 @@ class _ChatPageState extends State<ChatPage> {
                         }
                       } else if (!userAdded) {
                         return Container(
-                          padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
+                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
                           child: const Column(
                             children: [
                               CircleAvatar(
@@ -193,7 +193,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         );
                       }
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     },
                   );
                 }
@@ -212,29 +212,6 @@ class _ChatPageState extends State<ChatPage> {
               ),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 65,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          hintStyle: TextStyle(color: Colors.grey.shade600),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Colors.grey.shade600,
-                            size: 20,
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(60),
-                            borderSide: BorderSide(color: Colors.grey.shade100),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                   Expanded(
                     child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: fetchUsers(),
@@ -244,7 +221,7 @@ class _ChatPageState extends State<ChatPage> {
                         } else if (snapshot.hasError) {
                           return Center(child: Text('Error: ${snapshot.error}'));
                         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return Center(child: Text('No users found'));
+                          return const Center(child: Text('No users found'));
                         } else {
                           List<Map<String, dynamic>> users = snapshot.data!;
                           bool userAdded = false;
@@ -257,15 +234,13 @@ class _ChatPageState extends State<ChatPage> {
                               {
                                 String? currentUser = users[index]['CurrentUser'] as String;
                                 String? addedUser = users[index]['AddedUser'] as String?;
-                                String? addedEmail = users[index]['AddedEmail'] as String?;
 
                                 if (currentUser == widget.currentUser) {
                                   userAdded = true;
                                   return ConversationList(
                                     name: addedUser ?? 'No Name',
                                     imageUrl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
-                                    email: addedEmail ?? 'No Email',
-                                    currentuser: widget.currentUser,
+                                    currentUser: widget.currentUser,
                                   );
                                 }
                               }
@@ -274,11 +249,10 @@ class _ChatPageState extends State<ChatPage> {
                                 return ConversationList(
                                   name: 'No user Added',
                                   imageUrl: ' ',
-                                  email: '',
-                                  currentuser: widget.currentUser,
+                                  currentUser: widget.currentUser,
                                 );
                               }
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             },
                           );
                         }
