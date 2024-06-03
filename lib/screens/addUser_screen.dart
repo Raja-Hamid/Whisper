@@ -17,11 +17,26 @@ class AddUserScreen extends StatefulWidget {
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
-  String? addUser;
-  String? addEmail;
+  final textAddNameController = TextEditingController();
+  final textAddEmailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
-  final textAddNameController =TextEditingController();
-  final textAddEmailController=TextEditingController();
+  @override
+  void dispose() {
+    textAddNameController.dispose();
+    textAddEmailController.dispose();
+    super.dispose();
+  }
+
+  Future<bool> _checkIfUserExists(String email, String name) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('added_users')
+        .where('AddedEmail', isEqualTo: email)
+        .where('AddedUser', isEqualTo: name)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +49,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       ),
       body: SingleChildScrollView(
         child: Form(
+          key: _formKey,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -54,11 +70,28 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   child: CustomTextField(
                     label: 'User Name',
                     hintText: 'Enter User Name',
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.name,
                     obscureText: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter User Name';
+                      }
+                      return null;
+                    },
+                    controller: textAddNameController,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: CustomTextField(
+                    label: 'User Email',
+                    hintText: 'Enter User Email',
+                    keyboardType: TextInputType.emailAddress,
+                    obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter User Email';
                       }
                       return null;
                     },
@@ -67,22 +100,50 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () {
-                    Map<String,String> adduser={
-                      'CurrentUser':widget.currentUser,
-                      'AddedUser':textAddNameController.text,
-                      'AddedEmail':textAddEmailController.text
-                    };
-                    FirebaseFirestore.instance.collection('added_users').add(adduser);
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final userExists = await _checkIfUserExists(
+                        textAddEmailController.text,
+                        textAddNameController.text,
+                      );
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentUser: widget.currentUser, email: widget.currentEmail)
-                    )
-                    );
+                      if (userExists) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('User with this email and name already exists.')),
+                        );
+                      } else {
+                        try {
+                          Map<String, String> adduser = {
+                            'CurrentUser': widget.currentUser,
+                            'AddedUser': textAddNameController.text,
+                            'AddedEmail': textAddEmailController.text,
+                          };
+                          await FirebaseFirestore.instance.collection('added_users').add(adduser);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                currentUser: widget.currentUser,
+                                email: widget.currentEmail,
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error adding user: $e')),
+                          );
+                        }
+                      }
+                    }
                   },
-                  child: const Text('Add',style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(horizontal: 65  , vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 65, vertical: 10),
                   ),
                 ),
               ],
