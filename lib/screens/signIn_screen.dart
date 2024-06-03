@@ -9,17 +9,19 @@ import 'package:whisper/widgets/text_field.dart';
 import 'homeChat_screen.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({Key? key});
+  const SignInScreen({super.key});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  String? email;
+  String? password;
   bool rememberPassword = true;
-  final _formSignInKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _formSignInKey = GlobalKey<FormState>();
 
   Future<void> login() async {
     if (_formSignInKey.currentState!.validate()) {
@@ -197,7 +199,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: login,
+                          onPressed: (){
+                            if (_formSignInKey.currentState!.validate()) {
+                              setState(() {
+                                email = emailController.text;
+                                password = passwordController.text;
+                              });
+                              print('$password');
+                              print('$email');
+                              login();
+                            }
+                          },
                           child: const Text('Sign In'),
                         ),
                       ),

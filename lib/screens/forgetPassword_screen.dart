@@ -108,7 +108,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                             if (_formRecoveryKey.currentState!.validate()) {
                               setState(() {
                                 email = emailController.text;
-                                print(email);
                               });
                               reset();
                             }

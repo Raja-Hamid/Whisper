@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:whisper/screens/chatpage_screen.dart';
+import 'package:whisper/screens/chatPage_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class AddProfileScreen extends StatefulWidget {
-  String currentUser;
-  String currentEmail;
-  AddProfileScreen({required this.currentUser,required this.currentEmail});
+  final String currentUser;
+  final String currentEmail;
+  const AddProfileScreen({required this.currentUser,required this.currentEmail});
 
   @override
   State<AddProfileScreen> createState() => _AddProfileScreenState();
@@ -105,7 +105,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                       };
                       FirebaseFirestore.instance.collection('added_users').add(adduser);
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentuser: widget.currentUser, email: widget.currentEmail)
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentUser: widget.currentUser, email: widget.currentEmail)
                       )
                       );
                     },
