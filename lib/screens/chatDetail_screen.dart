@@ -18,22 +18,22 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           backgroundColor: Colors.white,
           flexibleSpace: SafeArea(
             child: Container(
-              padding: EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.only(right: 16),
               child: Row(
                 children: <Widget>[
                   IconButton(
                     onPressed: (){
                       Navigator.pop(context);
                     },
-                    icon: Icon(Icons.arrow_back,color: Colors.black,),
+                    icon: const Icon(Icons.arrow_back,color: Colors.black,),
                   ),
-                  SizedBox(width: 2,),
-                  CircleAvatar(
+                  const SizedBox(width: 2,),
+                  const CircleAvatar(
                     backgroundImage: NetworkImage("https://plus.unsplash.com/premium_photo-1673866484792-c5a36a6c025e?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"),
                     maxRadius: 20,
                   ),
-                  SizedBox(width: 12,),
-                  Expanded(
+                  const SizedBox(width: 12,),
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -52,11 +52,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
         ListView.builder(
         itemCount: messages.length,
           shrinkWrap: true,
-          padding: EdgeInsets.only(top: 10,bottom: 10),
-          physics: NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(top: 10,bottom: 10),
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index){
             return Container(
-              padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
+              padding: const EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
               child: Align(
                 alignment: (messages[index].messageType == "receiver"?Alignment.topLeft:Alignment.topRight),
                 child: Container(
@@ -64,8 +64,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     borderRadius: BorderRadius.circular(20),
                     color: (messages[index].messageType  == "receiver"?Colors.grey.shade200:Colors.blue[200]),
                   ),
-                  padding: EdgeInsets.all(16),
-                  child: Text(messages[index].messageContent, style: TextStyle(fontSize: 15),),
+                  padding: const EdgeInsets.all(16),
+                  child: Text(messages[index].messageContent, style: const TextStyle(fontSize: 15),),
                 ),
               ),
             );
@@ -74,15 +74,15 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
-                padding: EdgeInsets.only(left: 10,bottom: 10,top: 10),
+                padding: const EdgeInsets.only(left: 10,bottom: 10,top: 10),
                 height: 60,
                 width: double.infinity,
                 color: Colors.white,
                 child: Row(
                   children: <Widget>[
 
-                    SizedBox(width: 15,),
-                    Expanded(
+                    const SizedBox(width: 15,),
+                    const Expanded(
                       child: TextField(
                         decoration: InputDecoration(
                             hintText: "Write message...",
@@ -92,10 +92,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(right: 10),
+                      margin: const EdgeInsets.only(right: 10),
                       child: FloatingActionButton(
                         onPressed: (){},
-                        child: Icon(Icons.send,color: Colors.white,size: 15,),
+                        child: const Icon(Icons.send,color: Colors.white,size: 15,),
                         backgroundColor: Colors.blue,
 
                         elevation: 0,

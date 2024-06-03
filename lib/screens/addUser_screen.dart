@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:whisper/screens/chatpage_screen.dart';
-import 'package:whisper/screens/signIn_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 
 class AddProfileScreen extends StatefulWidget {
-  String currentuser;
-  String currentemail;
-  AddProfileScreen({required this.currentuser,required this.currentemail});
+  String currentUser;
+  String currentEmail;
+  AddProfileScreen({required this.currentUser,required this.currentEmail});
 
   @override
   State<AddProfileScreen> createState() => _AddProfileScreenState();
 }
 
 class _AddProfileScreenState extends State<AddProfileScreen> {
-  String? adduser;
-  String? addemail;
 
-  final textaddnamecontroller =TextEditingController();
-  final textaddemailcontroller=TextEditingController();
+  final textAddNameController =TextEditingController();
+  final textAddEmailController=TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,18 +28,18 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               const CircleAvatar(
                 radius: 130,
                 backgroundImage: AssetImage('assets/images/icon.png'), // Replace with your desired image source
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               const Text('Whisper a friend',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  controller: textaddnamecontroller,
+                  controller: textAddNameController,
                   decoration: InputDecoration(
                     labelText: 'User Name',
                     border: OutlineInputBorder(
@@ -62,11 +57,11 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  controller: textaddemailcontroller,
+                  controller: textAddEmailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration
                     (
@@ -88,7 +83,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
 
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -104,20 +99,20 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ElevatedButton(
                     onPressed: () {
                       Map<String,String> adduser={
-                        'CurrentUser':widget.currentuser,
-                        'AddedUser':textaddnamecontroller.text,
-                        'AddedEmail':widget.currentemail
+                        'CurrentUser':widget.currentUser,
+                        'AddedUser':textAddNameController.text,
+                        'AddedEmail':widget.currentEmail
                       };
                       FirebaseFirestore.instance.collection('added_users').add(adduser);
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentuser: widget.currentuser, email: widget.currentemail)
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentuser: widget.currentUser, email: widget.currentEmail)
                       )
                       );
                     },
-                    child: Text('Add',style: TextStyle(color: Colors.white),),
+                    child: const Text('Add',style: TextStyle(color: Colors.white),),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(horizontal: 65, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 65, vertical: 10),
                     ),
                   ),
                 ],
