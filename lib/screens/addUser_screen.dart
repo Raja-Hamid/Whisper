@@ -26,13 +26,17 @@ class _AddUserScreenState extends State<AddUserScreen> {
     super.dispose();
   }
 
-  Future<bool> _checkIfUserExists(String name, String collection, String field) async {
+  Future<bool> _checkIfUserExists(String name, String collection, String field) async
+  {
     final querySnapshot = await FirebaseFirestore.instance
         .collection(collection)
         .where(field, isEqualTo: name)
         .get();
     return querySnapshot.docs.isNotEmpty;
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,18 +92,21 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         'fullName',
                       );
 
-                      if (!userExistsInDatabase) {
+                      if (!userExistsInDatabase)
+                      {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('User with this name does not exist in the database.')),
                         );
-                      } else {
+                      }
+                      else {
                         final userAlreadyAdded = await _checkIfUserExists(
                           textAddNameController.text,
                           'added_users',
                           'AddedUser',
                         );
+                        final currentUserAdded =await _checkIfUserExists(widget.currentUser, 'added_user', 'CurrentUser');
 
-                        if (userAlreadyAdded) {
+                        if (userAlreadyAdded&&currentUserAdded) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('User with this name has already been added.')),
                           );
