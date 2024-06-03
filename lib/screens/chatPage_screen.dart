@@ -9,6 +9,7 @@ import 'package:whisper/widgets/bg_scaffold.dart';
 
 int check = 0;
 int check2 = 0;
+const Color ListBGColor=Colors.grey;
 
 class ChatUsers {
   String imageURL;
@@ -20,7 +21,7 @@ class ChatUsers {
 class ChatPageState {
   static List<ChatUsers> chatUsers = [
     ChatUsers(
-      imageURL: "assets/images/profile1.png",
+      imageURL: "assets/images/profile1.png ",
     ),
     ChatUsers(
       imageURL: "assets/images/profile2.png",
@@ -52,12 +53,10 @@ class ChatPageState {
   ];
 }
 
-Future<List<Map<String, dynamic>>> fetchUsers() async {
-  QuerySnapshot querySnapshot =
-  await FirebaseFirestore.instance.collection('users').get();
-  return querySnapshot.docs
-      .map((doc) => doc.data() as Map<String, dynamic>)
-      .toList();
+Future<List<Map<String, dynamic>>> fetchUsers() async
+{
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('added_users').get();
+  return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
 }
 
 class ChatPage extends StatefulWidget {
@@ -141,48 +140,48 @@ class _ChatPageState extends State<ChatPage> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No users found'));
+                  return Center(child: Text('No users found'));
                 } else {
                   List<Map<String, dynamic>> users = snapshot.data!;
                   bool userAdded = false;
                   return ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: users.length,
+                    itemCount: users.length , // Adding 1 for the 'No User Added' message
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
-                      String currentUser = users[index]['CurrentUser'] as String? ?? '';
-                      if (currentUser == widget.currentUser) {
-                        userAdded = true;
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MessageScreen(
-                                    receiver: users[index]['AddedUser'] as String? ?? 'No Name',
-                                    currentuser: widget.currentUser,
-                                    imageurl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
+                      if (index <= users.length) {
+                        String currentUser = users[index]['CurrentUser'] as String;
+                        if (currentUser == widget.currentUser) {
+                          userAdded = true;
+                          return Padding(
+                            padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MessageScreen(
+                                      receiver: users[index]['AddedUser'] ?? 'No Name',
+                                      currentuser: widget.currentUser,imageurl:ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: AssetImage(ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL),
-                                ),
-                                Text(users[index]['AddedUser'] as String? ?? 'No Name', style: const TextStyle(fontSize: 15, color: Colors.white)),
-                              ],
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: AssetImage(ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL),
+                                  ),
+                                  Text(users[index]['AddedUser'] ?? 'No Name', style: const TextStyle(fontSize: 15, color: Colors.white,fontWeight: FontWeight.w500)),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      }
-                      if (!userAdded && index == users.length - 1) {
+                          );
+                        }
+                      } else if (!userAdded) {
                         return Container(
-                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
+                          padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
                           child: const Column(
                             children: [
                               CircleAvatar(
@@ -194,7 +193,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         );
                       }
-                      return const SizedBox.shrink();
+                      return SizedBox.shrink();
                     },
                   );
                 }
@@ -205,10 +204,10 @@ class _ChatPageState extends State<ChatPage> {
             child: Container(
               margin: const EdgeInsets.only(top: 10),
               decoration: const BoxDecoration(
-                color: Colors.grey,
+                color: ListBGColor,
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(50),
-                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(45),
+                  topLeft: Radius.circular(45),
                 ),
               ),
               child: Column(
@@ -245,37 +244,41 @@ class _ChatPageState extends State<ChatPage> {
                         } else if (snapshot.hasError) {
                           return Center(child: Text('Error: ${snapshot.error}'));
                         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No users found'));
+                          return Center(child: Text('No users found'));
                         } else {
                           List<Map<String, dynamic>> users = snapshot.data!;
                           bool userAdded = false;
                           return ListView.builder(
-                            itemCount: users.length,
+                            itemCount: users.length ,
                             physics: const BouncingScrollPhysics(),
                             padding: const EdgeInsets.only(top: 16),
                             itemBuilder: (context, index) {
-                              String currentUser = users[index]['CurrentUser'] as String? ?? '';
-                              String addedUser = users[index]['AddedUser'] as String? ?? 'No Name';
-                              String addedEmail = users[index]['AddedEmail'] as String? ?? 'No Email';
+                              if (index <= users.length)
+                              {
+                                String? currentUser = users[index]['CurrentUser'] as String;
+                                String? addedUser = users[index]['AddedUser'] as String?;
+                                String? addedEmail = users[index]['AddedEmail'] as String?;
 
-                              if (currentUser == widget.currentUser) {
+                                if (currentUser == widget.currentUser) {
+                                  userAdded = true;
+                                  return ConversationList(
+                                    name: addedUser ?? 'No Name',
+                                    imageUrl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
+                                    email: addedEmail ?? 'No Email',
+                                    currentuser: widget.currentUser,
+                                  );
+                                }
+                              }
+                              else if (!userAdded) {
                                 userAdded = true;
                                 return ConversationList(
-                                  name: addedUser,
-                                  imageUrl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
-                                  email: addedEmail,
-                                  currentuser: widget.currentUser,
-                                );
-                              }
-                              if (!userAdded && index == users.length - 1) {
-                                return ConversationList(
                                   name: 'No user Added',
-                                  imageUrl: '',
+                                  imageUrl: ' ',
                                   email: '',
                                   currentuser: widget.currentUser,
                                 );
                               }
-                              return const SizedBox.shrink();
+                              return SizedBox.shrink();
                             },
                           );
                         }

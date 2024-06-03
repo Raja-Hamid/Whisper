@@ -7,24 +7,21 @@ class AddUserScreen extends StatefulWidget {
   final String currentUser;
   final String currentEmail;
   const AddUserScreen({
-    Key? key,
+    super.key,
     required this.currentUser,
     required this.currentEmail,
-  }) : super(key: key);
+  });
 
   @override
   State<AddUserScreen> createState() => _AddUserScreenState();
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
-  final emailController = TextEditingController();
-  final _formAddKey = GlobalKey<FormState>();
+  String? addUser;
+  String? addEmail;
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    super.dispose();
-  }
+  final textAddNameController =TextEditingController();
+  final textAddEmailController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +34,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
       ),
       body: SingleChildScrollView(
         child: Form(
-          key: _formAddKey,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -56,53 +52,37 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: CustomTextField(
-                    label: 'Email',
-                    hintText: 'Enter Email',
+                    label: 'User Name',
+                    hintText: 'Enter User Name',
                     keyboardType: TextInputType.emailAddress,
                     obscureText: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter Email';
+                        return 'Please enter User Name';
                       }
                       return null;
                     },
-                    controller: emailController,
+                    controller: textAddEmailController,
                   ),
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () async {
-                    if (_formAddKey.currentState!.validate()) {
-                      String email = emailController.text;
+                  onPressed: () {
+                    Map<String,String> adduser={
+                      'CurrentUser':widget.currentUser,
+                      'AddedUser':textAddNameController.text,
+                      'AddedEmail':textAddEmailController.text
+                    };
+                    FirebaseFirestore.instance.collection('added_users').add(adduser);
 
-                      Map<String, String> adduser = {
-                        'CurrentUser': widget.currentUser,
-                        'AddedEmail': email,
-                      };
-
-                      await FirebaseFirestore.instance
-                          .collection('added_users')
-                          .add(adduser);
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            currentUser: widget.currentUser,
-                            email: email,
-                          ),
-                        ),
-                      );
-                    }
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(currentUser: widget.currentUser, email: widget.currentEmail)
+                    )
+                    );
                   },
-                  child: const Text(
-                    'Add',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: const Text('Add',style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 65, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 65  , vertical: 10),
                   ),
                 ),
               ],
