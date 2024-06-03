@@ -21,9 +21,6 @@ class ChatUsers {
 class ChatPageState {
   static List<ChatUsers> chatUsers = [
     ChatUsers(
-      imageURL: "assets/images/profile1.png ",
-    ),
-    ChatUsers(
       imageURL: "assets/images/profile2.png",
     ),
     ChatUsers(
