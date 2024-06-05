@@ -34,6 +34,15 @@ class _AddUserScreenState extends State<AddUserScreen> {
         .get();
     return querySnapshot.docs.isNotEmpty;
   }
+  Future<bool> _checkIfUserExists2(String name2,String name, String collection, String field2,String field) async
+  {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection(collection)
+        .where(field, isEqualTo: name)
+        .where(field2,isEqualTo: name2)
+        .get();
+    return querySnapshot.docs.isNotEmpty;
+  }
 
 
 
@@ -97,20 +106,27 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('User with this name does not exist in the database.')),
                         );
-                      }
-                      else {
-                        final userAlreadyAdded = await _checkIfUserExists(
-                          textAddNameController.text,
-                          'added_users',
-                          'AddedUser',
-                        );
-                        final currentUserAdded =await _checkIfUserExists(widget.currentUser, 'added_user', 'CurrentUser');
+                      }//String name2,String name, String collection, String field2,String field
 
-                        if (userAlreadyAdded&&currentUserAdded) {
+                      else {
+                        final userAlreadyAdded = await _checkIfUserExists2(
+                            textAddNameController.text,
+                            widget.currentUser,
+                            'added_users',//collection
+                            'AddedUser',
+                            'CurrentUser'
+                          //field
+                        );
+                        if (userAlreadyAdded )//
+                            {
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('User with this name has already been added.')),
                           );
-                        } else {
+                        }
+
+                        else
+                        {
                           try {
                             Map<String, String> adduser = {
                               'CurrentUser': widget.currentUser,
