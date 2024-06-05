@@ -97,9 +97,17 @@ class _SignInScreenState extends State<SignInScreen> {
             flex: 7,
             child: Container(
               padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.white12.withOpacity(0.8), // Adjust opacity as needed
+                  ],
+                  stops: const [0,0],
+                ),
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(40.0),
                   topRight: Radius.circular(40.0),
                 ),
@@ -205,8 +213,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                 email = emailController.text;
                                 password = passwordController.text;
                               });
-                              print('$password');
-                              print('$email');
                               login();
                             }
                           },

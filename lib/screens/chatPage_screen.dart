@@ -50,17 +50,16 @@ class ChatPageState {
   ];
 }
 
-Future<List<Map<String, dynamic>>> fetchUsers() async
+Stream<QuerySnapshot> fetchUsersStream()
 {
-  QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('added_users').get();
-  return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  return FirebaseFirestore.instance.collection('added_users').snapshots();
 }
 
 class ChatPage extends StatefulWidget {
   final String email;
   final String currentUser;
 
-  ChatPage({required this.currentUser, required this.email});
+  const ChatPage({super.key, required this.currentUser, required this.email});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -128,38 +127,40 @@ class _ChatPageState extends State<ChatPage> {
             height: 10,
           ),
           SizedBox(
-            height: 100,
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: fetchUsers(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No users found'));
-                } else {
-                  List<Map<String, dynamic>> users = snapshot.data!;
-                  bool userAdded = false;
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: users.length , // Adding 1 for the 'No User Added' message
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      if (index <= users.length) {
-                        String currentUser = users[index]['CurrentUser'] as String;
-                        if (currentUser == widget.currentUser) {
-                          userAdded = true;
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
+              height: 100,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: fetchUsersStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No users found'));
+                  } else {
+                    final users = snapshot.data!.docs;
+                    List<Widget> userWidgets = [];
+                    bool userAdded = false;
+
+                    for (var user in users) {
+                      final userData = user.data() as Map<String, dynamic>;
+                      final currentUser = userData['CurrentUser'] as String?;
+                      final addedUser = userData['AddedUser'] as String?;
+
+                      if (currentUser == widget.currentUser) {
+                        userAdded = true;
+                        userWidgets.add(
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => MessageScreen(
-                                      receiver: users[index]['AddedUser'] ?? 'No Name',
-                                      currentuser: widget.currentUser,imageurl:ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
+                                      receiver: addedUser ?? 'No Name',
+                                      currentuser: widget.currentUser,
+                                      imageurl: ChatPageState.chatUsers[users.indexOf(user) % ChatPageState.chatUsers.length].imageURL,
                                     ),
                                   ),
                                 );
@@ -168,34 +169,55 @@ class _ChatPageState extends State<ChatPage> {
                                 children: [
                                   CircleAvatar(
                                     radius: 30,
-                                    backgroundImage: AssetImage(ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL),
+                                    backgroundImage: AssetImage(ChatPageState.chatUsers[users.indexOf(user) % ChatPageState.chatUsers.length].imageURL),
                                   ),
-                                  Text(users[index]['AddedUser'] ?? 'No Name', style: const TextStyle(fontSize: 15, color: Colors.white,fontWeight: FontWeight.w500)),
+                                  Text(
+                                    addedUser ?? 'No Name',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          );
-                        }
-                      } else if (!userAdded) {
-                        return Container(
-                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
+                          ),
+                        );
+                      }
+                    }
+
+                    if (!userAdded) {
+                      userWidgets.add(
+                        Container(
+                          padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
                           child: const Column(
                             children: [
                               CircleAvatar(
                                 radius: 30,
                                 backgroundImage: AssetImage(''),
                               ),
-                              Text('No User Added', style: TextStyle(fontSize: 15, color: Colors.white)),
+                              Text(
+                                'No User Added',
+                                style: TextStyle(fontSize: 15, color: Colors.white),
+                              ),
                             ],
                           ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  );
-                }
-              },
-            ),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: userWidgets.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return userWidgets[index];
+                      },
+                    );
+                  }
+                },
+              )
           ),
           Expanded(
             child: Container(
@@ -203,58 +225,61 @@ class _ChatPageState extends State<ChatPage> {
               decoration: const BoxDecoration(
                 color: ListBGColor,
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(45),
-                  topLeft: Radius.circular(45),
+                  topRight: Radius.circular(50),
+                  topLeft: Radius.circular(50),
                 ),
               ),
               child: Column(
                 children: [
-                  Expanded(
-                    child: FutureBuilder<List<Map<String, dynamic>>>(
-                      future: fetchUsers(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No users found'));
-                        } else {
-                          List<Map<String, dynamic>> users = snapshot.data!;
-                          bool userAdded = false;
-                          return ListView.builder(
-                            itemCount: users.length ,
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.only(top: 16),
-                            itemBuilder: (context, index) {
-                              if (index <= users.length)
-                              {
-                                String? currentUser = users[index]['CurrentUser'] as String;
-                                String? addedUser = users[index]['AddedUser'] as String?;
+                  SizedBox(height: 10),
 
-                                if (currentUser == widget.currentUser) {
-                                  userAdded = true;
-                                  return ConversationList(
-                                    name: addedUser ?? 'No Name',
-                                    imageUrl: ChatPageState.chatUsers[index % ChatPageState.chatUsers.length].imageURL,
-                                    currentUser: widget.currentUser,
-                                  );
-                                }
-                              }
-                              else if (!userAdded) {
+                  Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: fetchUsersStream(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final users = snapshot.data!.docs;
+                            List<Widget> userWidgets = [];
+                            bool userAdded = false;
+
+                            for (var user in users) {
+                              final userData = user.data() as Map<String, dynamic>;
+                              final currentUser = userData['CurrentUser'] as String?;
+                              final addedUser = userData['AddedUser'] as String?;
+
+                              if (currentUser == widget.currentUser) {
                                 userAdded = true;
-                                return ConversationList(
+                                userWidgets.add(
+                                  ConversationList(
+                                    name: addedUser ?? 'No Name',
+                                    imageUrl: ChatPageState.chatUsers[users.indexOf(user) % ChatPageState.chatUsers.length].imageURL,
+                                    currentUser: widget.currentUser,
+                                  ),
+                                );
+                              }
+                            }
+
+                            if (!userAdded) {
+                              userWidgets.add(
+                                ConversationList(
                                   name: 'No user Added',
                                   imageUrl: ' ',
                                   currentUser: widget.currentUser,
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          );
-                        }
-                      },
-                    ),
+                                ),
+                              );
+                            }
+
+                            return ListView(
+                              physics: const BouncingScrollPhysics(),
+                              padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                              children: userWidgets,
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          }
+                          return const Center(child: CircularProgressIndicator());
+                        },
+                      )
                   ),
                 ],
               ),
