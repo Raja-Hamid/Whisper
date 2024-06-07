@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:whisper/screens/signIn_screen.dart';
+import 'package:whisper/screens/signin_screen.dart';
 import 'package:whisper/widgets/bg_scaffold.dart';
 import 'package:whisper/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,10 +72,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Expanded(
             flex: 7,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25.0, 30.0, 25.0, 20.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 20.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.white12.withOpacity(0.8), // Adjust opacity as needed
+                  ],
+                  stops: const [0,0],
+                ),
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(40.0),
                   topRight: Radius.circular(40.0),
                 ),
@@ -95,7 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30.0,
+                        height: 20.0,
                       ),
                       CustomTextField(
                         label: 'Full Name',
@@ -110,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: fullNameController,
                       ),
                       const SizedBox(
-                        height: 25.0,
+                        height: 20.0,
                       ),
                       CustomTextField(
                         label: 'Email',
@@ -126,7 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: emailController,
                       ),
                       const SizedBox(
-                        height: 25.0,
+                        height: 20.0,
                       ),
                       CustomTextField(
                         label: 'Password',
@@ -141,7 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: passwordController,
                       ),
                       const SizedBox(
-                        height: 25.0,
+                        height: 20.0,
                       ),
                       Row(
                         children: [
@@ -189,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 25.0,
+                        height: 20.0,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

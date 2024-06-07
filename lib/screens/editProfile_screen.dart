@@ -16,32 +16,28 @@ class _edit_profileState extends State<edit_profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile Settings'),
+        title: const Text('Profile Settings'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 40,),
-        
+            const SizedBox(height: 40,),
             CircleAvatar(
               radius: 130,
               backgroundImage: NetworkImage(pic_link),
             ),
-        
-            SizedBox(height: 40),
-        
+            const SizedBox(height: 40),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-        
               children: [
-                SizedBox(width: 25),
-                Icon(CupertinoIcons.profile_circled, size: 40),
-                SizedBox(width: 10),
+                const SizedBox(width: 25),
+                const Icon(CupertinoIcons.profile_circled, size: 40),
+                const SizedBox(width: 10),
                 Container(
                   child: Row(
                     children: [
-                      Text("", style: TextStyle(color: Colors.black45)),
+                      const Text("", style: TextStyle(color: Colors.black45)),
                       Container(
                         width: 250,
                         height: 40,

@@ -9,7 +9,6 @@ import 'package:whisper/widgets/bg_scaffold.dart';
 
 int check = 0;
 int check2 = 0;
-const Color ListBGColor=Colors.grey;
 
 class ChatUsers {
   String imageURL;
@@ -136,7 +135,7 @@ class _ChatPageState extends State<ChatPage> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(child: Text('No users found'));
+                    return const Center(child: Text('No users found'));
                   } else {
                     final users = snapshot.data!.docs;
                     List<Widget> userWidgets = [];
@@ -151,7 +150,7 @@ class _ChatPageState extends State<ChatPage> {
                         userAdded = true;
                         userWidgets.add(
                           Padding(
-                            padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
+                            padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -190,7 +189,7 @@ class _ChatPageState extends State<ChatPage> {
                     if (!userAdded) {
                       userWidgets.add(
                         Container(
-                          padding: EdgeInsets.fromLTRB(15, 10, 5, 0),
+                          padding: const EdgeInsets.fromLTRB(15, 10, 5, 0),
                           child: const Column(
                             children: [
                               CircleAvatar(
@@ -222,17 +221,24 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(top: 10),
-              decoration: const BoxDecoration(
-                color: ListBGColor,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.white12.withOpacity(0.8), // Adjust opacity as needed
+                  ],
+                  stops: const [0,0],
+                ),
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(50),
                   topLeft: Radius.circular(50),
                 ),
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 10),
-
+                  const SizedBox(height: 10),
                   Expanded(
                       child: StreamBuilder<QuerySnapshot>(
                         stream: fetchUsersStream(),
